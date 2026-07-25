@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Collections | Parvi Studio</title>
+    
+  <!-- Bootstrap 5 CSS CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Google Fonts (Premium Look) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- FontAwesome Icons Link (इसे head टैग में पेस्ट करें) -->
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        h1, h2, h3, .brand-name {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* नैविगेशन बार */
+        .navbar-brand {
+            font-size: 24px;
+            letter-spacing: 4px;
+            font-weight: 700;
+        }
+        .nav-link {
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: #000 !important;
+            margin: 0 10px;
+        }
+        .nav-link.active-link {
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 5px;
+        }
+
+        /* फ़िल्टर बटन्स की स्टाइल */
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .filter-buttons a {
+            text-decoration: none;
+            color: #555;
+            border: 1px solid #e0e0e0;
+            padding: 8px 22px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 500;
+            transition: 0.3s ease;
+            text-transform: uppercase;
+        }
+        .filter-buttons a.active, .filter-buttons a:hover {
+            background-color: #000000;
+            color: #ffffff;
+            border-color: #000000;
+        }
+
+        /* प्रोडक्ट कार्ड और होवर इफ़ेक्ट */
+        .product-image-wrapper {
+            position: relative;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+        .product-image-wrapper img {
+            width: 100%;
+            transition: transform 0.5s ease;
+        }
+        .product-card:hover .product-image-wrapper img {
+            transform: scale(1.03);
+        }
+        .badge-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #000000;
+            color: #ffffff;
+            font-size: 9px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            padding: 5px 12px;
+            text-transform: uppercase;
+            z-index: 3;
+        }
+        .product-hover-buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translate(-50%, 10px);
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 4;
+        }
+        .product-card:hover .product-hover-buttons {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+        .btn-hover-bag {
+            background-color: #fcf8f2;
+            color: #000000;
+            border: none;
+            padding: 12px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 0;
+            cursor: pointer;
+        }
+        .btn-hover-bag:hover {
+            background-color: #ffffff;
+        }
+        .btn-hover-details {
+            background-color: rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            padding: 12px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-transform: uppercase;
+            backdrop-filter: blur(2px);
+            border-radius: 0;
+            cursor: pointer;
+        }
+        .btn-hover-details:hover {
+            background-color: #000000;
+            border-color: #000000;
+        }
+        .product-info h3 {
+            font-size: 14px;
+            font-weight: normal;
+        }
+        .product-price {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ===================================================
+   🖤 PARVI STUDIO PREMIUM MERGED FOOTER STYLING 🖤
+   =================================================== */
+.site-footer {
+    background-color: #fcfbf9; /* लग्ज़री हल्का क्रीम बैकग्राउंड */
+    color: #000000;
+    border-top: 1px solid #eae9e6;
+    margin-top: 80px;
+}
+
+/* 1. ब्रांड बेनिफिट्स बार (Top Tier) */
+.footer-benefits-bar {
+    padding: 40px 0;
+    border-bottom: 1px solid #eae9e6;
+}
+.benefit-icon { 
+    font-size: 1.2rem; 
+    margin-bottom: 6px; 
+    color: #222; 
+}
+.benefit-title { 
+    font-size: 0.8rem; 
+    font-weight: 600; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    margin-bottom: 2px;
+}
+.benefit-desc { 
+    font-size: 0.75rem; 
+    color: #666; 
+}
+
+/* 2. न्यूज़लेटर सब्सक्राइब बार (Middle Tier) */
+.footer-newsletter-bar {
+    padding: 60px 0;
+    border-bottom: 1px solid #eae9e6;
+}
+.newsletter-title { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.8rem; 
+    font-weight: normal; 
+    margin-bottom: 5px;
+}
+.newsletter-desc { 
+    font-size: 0.85rem; 
+    color: #555; 
+}
+.newsletter-form-group { 
+    display: flex; 
+    width: 100%; 
+    max-width: 450px; 
+    border-bottom: 1px solid #000; 
+    padding-bottom: 5px; 
+}
+.newsletter-input { 
+    border: none; 
+    background: transparent; 
+    width: 100%; 
+    padding: 8px 0; 
+    font-size: 0.85rem; 
+}
+.newsletter-input:focus { 
+    outline: none; 
+}
+.btn-subscribe { 
+    border: none; 
+    background: transparent; 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    font-weight: bold; 
+    cursor: pointer;
+}
+
+/* 3. मुख्य लिंक्स मैट्रिक्स ग्रिड (Bottom Tier) */
+.footer-links-bar { 
+    padding: 70px 0; 
+}
+.footer-brand-title { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 2.2rem; 
+    letter-spacing: 4px; 
+    line-height: 1;
+}
+.footer-brand-desc { 
+    font-size: 0.8rem; 
+    color: #555; 
+    line-height: 1.8; 
+}
+.footer-col-title { 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    font-weight: 600; 
+    margin-bottom: 22px; 
+    color: #000;
+}
+
+/* 🚨 यहाँ से बूटस्ट्रैप के भद्दे डॉट्स (Bullets) गायब होंगे */
+.footer-menu-links { 
+    list-style: none !important; 
+    padding-left: 0 !important; 
+    margin-bottom: 0; 
+}
+.footer-menu-links li { 
+    margin-bottom: 12px; 
+}
+.footer-menu-links li a { 
+    color: #555; 
+    text-decoration: none !important; 
+    font-size: 0.8rem; 
+    transition: 0.3s ease; 
+}
+.footer-menu-links li a:hover { 
+    color: #000000; 
+    padding-left: 4px; /* हल्का सा सरकने वाला लग्ज़री इफ़ेक्ट */
+}
+
+/* 4. एब्सोल्यूट बेस रो (Merged Copyright & Socials) */
+.footer-bottom-row { 
+    padding: 35px 0; 
+    background-color: #f7f6f2; /* नीचे की पट्टी को थोड़ा सा गहरा टोन दिया */
+}
+.footer-social-links a, .footer-bottom-links a {
+    font-size: 0.75rem;
+    transition: 0.3s;
+}
+.footer-social-links a:hover { 
+    color: #000000 !important;
+    text-decoration: underline !important;
+}
+.footer-bottom-links a:hover { 
+    color: #000000 !important; 
+    text-decoration: underline !important;
+}
+
+/* =======================
+        NAVBAR
+======================= */
+
+.navbar{
+    background: #ffffff;
+    border-bottom: 1px solid #e9e9e9;
+    padding: 0;
+    min-height: 78px;
+    z-index: 999;
+}
+
+.navbar .container{
+    max-width: 1550px;
+    padding: 0 40px;
+}
+
+/* Logo */
+
+.navbar-brand{
+    text-decoration: none;
+    padding: 0;
+    margin-right: 60px;
+    line-height: 1;
+}
+
+.brand-name{
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #000;
+}
+
+.brand-subtitle{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    font-weight: 400;
+    color: #444;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+/* Menu */
+
+.navbar-nav{
+    gap: 28px;
+}
+
+.nav-link{
+    position: relative;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #000 !important;
+    padding: 30px 0 !important;
+    margin: 0;
+    transition: .3s;
+}
+
+.nav-link:hover{
+    color: #000 !important;
+}
+
+/* Active Underline */
+
+.nav-link::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 20px;
+    width: 0;
+    height: 1.5px;
+    background: #000;
+    transition: .3s ease;
+}
+
+.nav-link:hover::after,
+.active-link::after{
+    width: 100%;
+}
+
+/* Search */
+
+.input-group{
+    width: 210px;
+    border-bottom: 1px solid #000;
+}
+
+.input-group .form-control{
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent;
+    font-size: 12px;
+    padding: 5px 0;
+}
+
+.input-group .form-control::placeholder{
+    color: #666;
+}
+
+.input-group .btn{
+    box-shadow: none !important;
+}
+
+/* Right Icons */
+
+.d-flex.gap-4{
+    gap: 20px !important;
+}
+
+.d-flex.gap-4 a{
+    color: #000;
+}
+
+.d-flex.gap-4 i{
+    font-size: 18px;
+}
+
+.badge{
+    width: 17px !important;
+    height: 17px !important;
+    font-size: 9px !important;
+    font-weight: 600;
+    padding: 0 !important;
+}
+
+/* Dropdown */
+
+.dropdown-menu{
+    border-radius: 0;
+    border: 1px solid #eee;
+    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+}
+
+.dropdown-item{
+    font-size: 12px;
+    letter-spacing: .5px;
+}
+
+.dropdown-item:hover{
+    background: #f8f8f8;
+}
+
+
+
+
+
+.footer-bottom-row .badge{
+    padding: 6px 10px !important;
+    margin: 4px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.footer-bottom-row .badge{
+    margin: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-3">
+    <div class="container">
+        
+     <!-- 🎯 ब्रांड लोगो: जिसे बिल्कुल आपकी फोटो जैसा ऊपर-नीचे (Double-Tier) सेट किया है -->
+<a class="navbar-brand text-uppercase d-inline-flex flex-column align-items-start position-relative" href="{% url 'index' %}" style="margin-right: 2rem; line-height: 1; text-decoration: none; box-shadow: none;">
+    <!-- ऊपर 'PARVI' (बड़ा और बोल्ड) -->
+    <span class="brand-name fw-bold" style="letter-spacing: 4px; font-size: 24px; font-family: 'Playfair Display', serif;">PARVI</span>
+    
+    <!-- ठीक उसके नीचे 'COLLECTION' (छोटा, पतला और ज्यादा लेटर स्पेसिंग के साथ) -->
+    <span class="brand-subtitle text-uppercase" style="letter-spacing: 2.5px; font-size: 9px; font-family: 'Montserrat', sans-serif; font-weight: 400; margin-top: 2px; opacity: 0.85;">Collection</span>
+</a>
+
+<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="box-shadow: none; padding: 0;">
+    <span class="navbar-toggler-icon"></span>
+</button>
+
+       <!-- बीच के मेन्यू लिंक्स (ABOUT का काला रंग 100% साफ़) -->
+<div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link {% if 'collection-all' in request.path and 'new_arrivals' not in request.get_full_path %}active-link{% endif %}" href="{% url 'collection_all' %}">Collections</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'new_arrivals' in request.get_full_path %}active-link{% endif %}" href="/collection-all/?new_arrivals=true">New Arrivals</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'editorial' in request.path %}active-link{% endif %}" href="{% url 'editorial' %}">Editorial</a>
+        </li>
+        <li class="nav-item">
+            <!-- 🎯 सुधार: इनलाइन ब्लैक कलर हटा दिया ताकि यह डायनामिकली सफ़ेद और काला हो सके -->
+            <a class="nav-link {% if 'about' in request.path %}active-link{% endif %}" href="{% url 'about_page' %}" style="font-weight: 500;">About</a>
+        </li>
+    </ul>
+</div>
+
+
+        <!-- 🔍 पारवी मिनिमल लग्ज़री सर्च बॉक्स फ़ॉर्म -->
+        <form action="{% url 'search_product' %}" method="GET" class="d-none d-md-flex align-items-center me-4" style="max-width: 200px; margin: 0;">
+            <div class="input-group border-bottom">
+                <input type="text" name="q" value="{{ query|default:'' }}" class="form-control border-0 bg-transparent py-1 small" placeholder="Search garments..." style="font-size: 11px; font-family: 'Montserrat', sans-serif; box-shadow: none;" required>
+                <button type="submit" class="btn border-0 bg-transparent p-0" style="font-size: 12px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </form>
+
+        <!-- 👗 राइट साइड एलिमेंट्स: आइकॉन-बेस्ड नेविगेशन 👗 -->
+        <div class="d-flex align-items-center gap-4">
+            
+            <!-- 1. 👤 यूज़र प्रोफ़ाइल ड्रॉपडाउन -->
+            {% if request.user.is_authenticated %}
+            <div class="dropdown">
+                <a class="text-decoration-none d-block py-1" href="#" role="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 16px;">
+                    <i class="fa-regular fa-user"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end border rounded-0 shadow-sm mt-2" aria-labelledby="userMenuDropdown" style="font-size: 12px; font-family: 'Montserrat', sans-serif; min-width: 160px; letter-spacing: 0.5px;">
+                    <li class="dropdown-header text-dark text-capitalize border-bottom pb-2 mb-1">Hi, {{ request.user.username }}</li>
+                    <li><a class="dropdown-item py-2" href="{% url 'my_orders' %}" style="color: #000000;"><i class="fa-solid fa-box me-2 text-muted"></i> My Orders</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item py-2 text-danger" href="{% url 'logout_view' %}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <a href="{% url 'login_view' %}" class="text-decoration-none d-block py-1" style="font-size: 16px;" title="Login">
+                <i class="fa-regular fa-user"></i>
+            </a>
+            {% endif %}
+
+            <!-- 2. 🛍️ शॉपिंग बैग -->
+            <a href="{% url 'cart_view' %}" class="text-decoration-none position-relative d-block py-1" style="font-size: 16px;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                
+                {% if cart_total_items > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark text-white d-flex align-items-center justify-content-center" style="font-size: 9px; width: 15px; height: 15px; padding: 0; font-family: 'Montserrat', sans-serif; font-weight: 600;">
+                    {{ cart_total_items }}
+                </span>
+                {% endif %}
+            </a>
+
+        </div>
+
+    </div>
+</nav>
+
+
+    <!-- MAIN COLLECTIONS CONTAINER -->
+    <main class="container my-5 py-3">
+       <!-- इसकी जगह यह पेस्ट करें -->
+<div class="text-center mb-5">
+    {% if is_new_filter == 'true' %}
+        <h1 class="display-5 fw-normal text-uppercase" style="letter-spacing: 2px;">New Arrivals</h1>
+    {% else %}
+        <h1 class="display-5 fw-normal text-uppercase" style="letter-spacing: 2px;">All Collections</h1>
+    {% endif %}
+</div>
+
+        <!-- ऊपर के फिल्टर्स/बटन्स -->
+      <!-- इसे ढूंढें और इसके ऊपर-नीचे कंडीशन लगा दें -->
+{% if "new_arrivals" not in request.get_full_path %}
+    <div class="filter-buttons mb-5">
+        <a href="{% url 'collection_all' %}" class="{% if not selected_category %}active{% endif %}">ALL</a>
+        
+        {% for cat in categories %}
+            <a href="{% url 'collection_all' %}?category={{ cat.slug }}" 
+               class="{% if selected_category == cat.slug %}active{% endif %}">
+               {{ cat.name }}
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+<!-- नीचे दिखने वाले प्रोडक्ट्स की ग्रिड -->
+<div class="row g-4 justify-content-start">
+    {% for product in products %}
+    <div class="col-10 col-sm-6 col-md-4 col-lg-3 mx-auto mx-sm-0">
+        <div class="product-card h-100 d-flex flex-column">
+            
+            <!-- इमेज और होवर बटन्स का कॉम्बो -->
+            <div class="product-image-wrapper">
+                {% if product.tag %}
+                    <span class="badge-tag">{{ product.tag }}</span>
+                {% endif %}
+                
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                
+                <!-- अपडेटेड कोड: कलेक्शन पेज के लिए भी फॉर्म वाला बैग बटन एक्टिव किया -->
+                <div class="product-hover-buttons">
+                    <form action="{% url 'add_to_bag' %}" method="POST" class="w-100 m-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="size" value="S"> <!-- डिफ़ॉल्ट साइज S -->
+                        <button type="submit" class="btn btn-hover-bag w-100 border-0">ADD TO BAG</button>
+                    </form>
+                    
+                    <!-- एरर से बचने के लिए सुरक्षित डायरेक्ट रास्ता लगाया -->
+                    <button class="btn btn-hover-details w-100 mt-1" onclick="window.location.href='/product/{{ product.id }}/'">
+                        VIEW DETAILS
+                    </button>
+                </div>
+            </div>
+            
+            <!-- फ़ोटो के नीचे का टेक्स्ट डिटेल्स -->
+            <div class="mt-3 d-flex justify-content-between align-items-start flex-grow-1">
+                <div>
+                    <h3 class="mb-1 text-secondary" style="font-family: 'Montserrat', sans-serif;">{{ product.name }}</h3>
+                    <span class="text-muted small">{{ product.colors }}</span>
+                </div>
+                <span class="product-price">₹ {{ product.price }}</span>
+            </div>
+
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted fs-5">इस कलेक्शन में अभी कोई प्रोडक्ट नहीं है।</p>
+    </div>
+    {% endfor %}
+</div>
+</main>
+
+   
+<!-- FOOTER -->
+<!-- 🖤 MERGED LUXURY WEBSITE FOOTER SECTION 🖤 -->
+<footer class="site-footer">
+    
+    <!-- 1. Top Tier: Brand Benefits Row (With Updated Business Rules) -->
+   <!-- 🏆 NEW LUXURY BRAND BENEFITS BAR (आपकी फोटो के अनुसार 100% मैच) 🏆 -->
+<div class="footer-benefits-bar" style="background-color: #fcfbf9; padding: 50px 0; border-bottom: 1px solid #eae9e6;">
+    <div class="container-fluid px-5">
+        <div class="row g-4 justify-content-between text-center">
+            
+            <!-- Benefit 1: Premium Quality -->
+            <div class="col-6 col-md-3 benefit-item">
+                <div class="benefit-icon mb-2" style="font-size: 1.4rem; color: #000000;">
+                    <i class="fa-solid fa-leaf"></i> <!-- प्रीमियम पत्ती का आइकॉन -->
+                </div>
+                <div class="benefit-title fw-bold text-uppercase" style="font-size: 12px; letter-spacing: 1.5px; color: #000000; margin-bottom: 5px;">Premium Quality</div>
+                <div class="benefit-desc text-muted" style="font-size: 12px; font-family: 'Montserrat', sans-serif;">Finest fabric for lasting comfort</div>
+            </div>
+
+            <!-- Benefit 2: Luxurious Fabric -->
+            <div class="col-6 col-md-3 benefit-item">
+                <div class="benefit-icon mb-2" style="font-size: 1.4rem; color: #000000;">
+                    <i class="fa-solid fa-wind"></i> <!-- सॉफ्ट फ़ैब्रिक/हवा का आइकॉन -->
+                </div>
+                <div class="benefit-title fw-bold text-uppercase" style="font-size: 12px; letter-spacing: 1.5px; color: #000000; margin-bottom: 5px;">Luxurious Fabric</div>
+                <div class="benefit-desc text-muted" style="font-size: 12px; font-family: 'Montserrat', sans-serif;">Soft, breathable & skin-friendly</div>
+            </div>
+
+            <!-- Benefit 3: Timeless Elegance -->
+            <div class="col-6 col-md-3 benefit-item">
+                <div class="benefit-icon mb-2" style="font-size: 1.4rem; color: #000000;">
+                    <i class="fa-solid fa-shirt"></i> <!-- क्लासिक डिज़ाईन/ड्रेस का आइकॉन -->
+                </div>
+                <div class="benefit-title fw-bold text-uppercase" style="font-size: 12px; letter-spacing: 1.5px; color: #000000; margin-bottom: 5px;">Timeless Elegance</div>
+                <div class="benefit-desc text-muted" style="font-size: 12px; font-family: 'Montserrat', sans-serif;">Classic designs for every occasion</div>
+            </div>
+
+            <!-- Benefit 4: Exquisite Craftsmanship -->
+            <div class="col-6 col-md-3 benefit-item">
+                <div class="benefit-icon mb-2" style="font-size: 1.4rem; color: #000000;">
+                    <i class="fa-solid fa-scissors"></i> <!-- सुई/धागा/कारीगरी का आइकॉन -->
+                </div>
+                <div class="benefit-title fw-bold text-uppercase" style="font-size: 12px; letter-spacing: 1.5px; color: #000000; margin-bottom: 5px;">Exquisite Craftsmanship</div>
+                <div class="benefit-desc text-muted" style="font-size: 12px; font-family: 'Montserrat', sans-serif;">Intricate detailing for a perfect finish</div>
+            </div>
+
+        </div>
+
+        <!-- 📜 फोटो के नीचे वाली सुंदर प्रीमियम इटैलिक टैगलाइन 📜 -->
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <div style="border-top: 1px solid #eae9e6; display: inline-block; width: 80px; margin-bottom: 15px;"></div>
+                <p class="fst-italic text-secondary m-0" style="font-family: 'Playfair Display', serif; font-size: 18px; letter-spacing: 1px; color: #444444 !important;">
+                    "Crafted with perfection, designed for you."
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+   
+
+    <!-- 3. Bottom Tier: Main Links Matrix Column Grid -->
+    <div class="footer-links-bar">
+        <div class="container-fluid px-5">
+            <div class="row g-5">
+                
+                <!-- Brand Detail Summary -->
+                <div class="col-12 col-md-4">
+                    <div class="footer-brand-title mb-1">PARVI</div>
+                    <div class="text-uppercase text-muted mb-3" style="font-size: 0.5rem; letter-spacing: 2px;">Collection</div>
+                    <p class="footer-brand-desc">Thoughtfully designed garments for the quietly confident woman. Bhopal · Madhya Pradesh
+
+
+ · India .</p>
+                </div>
+
+                <!-- Column 1: Shop Menu (Linked with Django views) -->
+                <div class="col-4 col-md-2 offset-md-1">
+                    <h6 class="footer-col-title">Shop</h6>
+                    <ul class="footer-menu-links">
+                        <li><a href="/collection-all/?new_arrivals=true">New Arrivals</a></li>
+                        <li><a href="{% url 'collection_all' %}">Collections</a></li>
+                        <!-- <li><a href="#">Sale</a></li>
+                        <li><a href="#">Gift Cards</a></li> -->
+                    </ul>
+                </div>
+
+                <!-- Column 2: Company Info -->
+                <div class="col-4 col-md-2">
+                    <h6 class="footer-col-title">Company</h6>
+                    <ul class="footer-menu-links">
+                        <li><a href="{% url 'about_page'%}">About Us</a></li>
+                        <!-- <li><a href="#">Sustainability</a></li>
+                        <li><a href="#">Careers</a></li> -->
+                        <li><a href="{% url 'editorial' %}">Editorial</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Help/Support -->
+                <div class="col-4 col-md-2">
+                    <h6 class="footer-col-title">Help</h6>
+                    <ul class="footer-menu-links">
+                        <!-- <li><a href="#">Returns</a></li> -->
+                        <li><a href="{% url 'collection_all'%}">Shopping</a></li>
+                        <!-- <li><a href="#">Sizing Guide</a></li> -->
+                        <li><!-- 🎯 100% फिक्स डायरेक्ट ईमेल लिंक: क्लिक करते ही आपकी आईडी पर मेल खुलेगा -->
+<a href="https://mail.google.com/mail/?view=cm&fs=1&to=parvicollection1@gmail.com&su=Customer%20Support&body=Hello%20Parvi%20Team"
+   target="_blank">
+    Contact Support
+</a>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Absolute Base: Merged Copyright & Social Row -->
+    <!-- 🖤 100% FIXED SINGLE LINE ABSOLUTE BASE ROW 🖤 -->
+<div class="footer-bottom-row border-top py-3" style="border-color: #eae9e6 !important; background-color: #f7f6f2;">
+    <div class="container-fluid px-4">
+        <!-- यह मुख्य डिब्बा तीनों चीज़ों को एक ही सीध में रखेगा -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            
+            <!-- 1. कॉपीराइट (एकदम लेफ्ट) -->
+            <div class="text-nowrap">
+                <span class="text-uppercase text-muted" style="font-size: 11px; letter-spacing: 1px; font-weight: 500;">
+                    &copy; 2026 PARVI STUDIO. ALL RIGHTS RESERVED.
+                </span>
+            </div>
+
+
+             <!-- 3. सोशल लोगोज़ (एकदम राइट) -->
+            <div class="footer-social-links text-nowrap" style="font-size: 1.1rem;">
+                <a href="https://instagram.com" target="_blank" class="text-dark text-decoration-none mx-2" title="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://facebook.com" target="_blank" class="text-dark text-decoration-none mx-2" title="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+            </div>
+
+            <!-- 2. सभी पेमेंट बैज (एकदम बीच में - साइड बाय साइड लॉक) -->
+            <!-- style="white-space: nowrap" लगाने से ये बैज कभी भी टूटकर नीचे नहीं गिरेंगे -->
+            <div class="d-flex align-items-center justify-content-center flex-wrap gap-1" style="max-width: 600px;">
+                
+                <span class="badge border bg-white px-2 py-1 text-dark fw-bold rounded-0" style="font-size: 9px; border-color: #eae9e6 !important; font-family: 'Montserrat', sans-serif;">
+                    <i class="fa-solid fa-mobile-screen-button text-primary me-1"></i> UPI
+                </span>
+
+                <span class="badge border bg-dark text-white px-2 py-1 rounded-0" style="font-size: 9px; font-family: 'Montserrat', sans-serif; font-weight: 700;">
+                    CRED
+                </span>
+
+                <span class="badge border bg-white px-2 py-1 text-success rounded-0" style="font-size: 9px; border-color: #25D366 !important; font-family: 'Montserrat', sans-serif; font-weight: 600;">
+                    <i class="fa-brands fa-whatsapp me-1"></i> Pay
+                </span>
+
+                <span class="badge border text-white px-2 py-1 rounded-0" style="font-size: 9px; background-color: #00d2c4 !important; border-color: #00d2c4 !important; font-family: 'Montserrat', sans-serif; font-weight: 700;">
+                    navi
+                </span>
+
+                <span class="badge border bg-white px-2 py-1 text-dark rounded-0" style="font-size: 9px; border-color: #eae9e6 !important; font-family: 'Montserrat', sans-serif; font-weight: 700;">
+                    super.<span class="text-danger">money</span>
+                </span>
+
+                <span class="badge border text-white px-2 py-1 rounded-0" style="font-size: 9px; background-color: #0a2885 !important; border-color: #0a2885 !important; font-family: 'Montserrat', sans-serif; font-weight: 600;">
+                    JioPay
+                </span>
+
+                <span class="badge border text-white px-2 py-1 rounded-0" style="font-size: 9px; background-color: #e30613 !important; border-color: #e30613 !important; font-family: 'Montserrat', sans-serif; font-weight: 600;">
+                    airtel
+                </span>
+
+                <span class="badge border text-dark px-2 py-1 rounded-0" style="font-size: 9px; background-color: #e5f962 !important; border-color: #e5f962 !important; font-family: 'Montserrat', sans-serif; font-weight: 800; font-style: italic;">
+                    slice
+                </span>
+
+                <span class="badge border bg-white px-2 py-1 text-dark rounded-0" style="font-size: 9px; border-color: #eae9e6 !important; font-family: 'Montserrat', sans-serif;">
+                    <span class="text-primary fw-bold">G</span>Pay
+                </span>
+
+                <span class="badge border text-white px-2 py-1 rounded-0" style="font-size: 9px; background-color: #5f259f !important; border-color: #5f259f !important; font-family: 'Montserrat', sans-serif; font-weight: 600;">
+                    PhonePe
+                </span>
+
+                <span class="badge border text-white px-2 py-1 rounded-0" style="font-size: 9px; background-color: #00b9f5 !important; border-color: #00b9f5 !important; font-family: 'Montserrat', sans-serif; font-weight: 700;">
+                    Paytm
+                </span>
+
+            </div>
+
+           
+
+        </div>
+    </div>
+</div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+
+
+    <!-- Bootstrap 5 JavaScript Bundle CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script></body>
+</html>

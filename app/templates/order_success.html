@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Status | Parvi</title>
+   <!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+    <style>body { font-family: 'Montserrat', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        /* ===================================================
+   🖤 PARVI STUDIO PREMIUM MERGED FOOTER STYLING 🖤
+   =================================================== */
+.site-footer {
+    background-color: #fcfbf9; /* लग्ज़री हल्का क्रीम बैकग्राउंड */
+    color: #000000;
+    border-top: 1px solid #eae9e6;
+    margin-top: 80px;
+}
+
+/* 1. ब्रांड बेनिफिट्स बार (Top Tier) */
+.footer-benefits-bar {
+    padding: 40px 0;
+    border-bottom: 1px solid #eae9e6;
+}
+.benefit-icon { 
+    font-size: 1.2rem; 
+    margin-bottom: 6px; 
+    color: #222; 
+}
+.benefit-title { 
+    font-size: 0.8rem; 
+    font-weight: 600; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    margin-bottom: 2px;
+}
+.benefit-desc { 
+    font-size: 0.75rem; 
+    color: #666; 
+}
+
+/* 2. न्यूज़लेटर सब्सक्राइब बार (Middle Tier) */
+.footer-newsletter-bar {
+    padding: 60px 0;
+    border-bottom: 1px solid #eae9e6;
+}
+.newsletter-title { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.8rem; 
+    font-weight: normal; 
+    margin-bottom: 5px;
+}
+.newsletter-desc { 
+    font-size: 0.85rem; 
+    color: #555; 
+}
+.newsletter-form-group { 
+    display: flex; 
+    width: 100%; 
+    max-width: 450px; 
+    border-bottom: 1px solid #000; 
+    padding-bottom: 5px; 
+}
+.newsletter-input { 
+    border: none; 
+    background: transparent; 
+    width: 100%; 
+    padding: 8px 0; 
+    font-size: 0.85rem; 
+}
+.newsletter-input:focus { 
+    outline: none; 
+}
+.btn-subscribe { 
+    border: none; 
+    background: transparent; 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    font-weight: bold; 
+    cursor: pointer;
+}
+
+/* 3. मुख्य लिंक्स मैट्रिक्स ग्रिड (Bottom Tier) */
+.footer-links-bar { 
+    padding: 70px 0; 
+}
+.footer-brand-title { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 2.2rem; 
+    letter-spacing: 4px; 
+    line-height: 1;
+}
+.footer-brand-desc { 
+    font-size: 0.8rem; 
+    color: #555; 
+    line-height: 1.8; 
+}
+.footer-col-title { 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    font-weight: 600; 
+    margin-bottom: 22px; 
+    color: #000;
+}
+
+/* 🚨 यहाँ से बूटस्ट्रैप के भद्दे डॉट्स (Bullets) गायब होंगे */
+.footer-menu-links { 
+    list-style: none !important; 
+    padding-left: 0 !important; 
+    margin-bottom: 0; 
+}
+.footer-menu-links li { 
+    margin-bottom: 12px; 
+}
+.footer-menu-links li a { 
+    color: #555; 
+    text-decoration: none !important; 
+    font-size: 0.8rem; 
+    transition: 0.3s ease; 
+}
+.footer-menu-links li a:hover { 
+    color: #000000; 
+    padding-left: 4px; /* हल्का सा सरकने वाला लग्ज़री इफ़ेक्ट */
+}
+
+/* 4. एब्सोल्यूट बेस रो (Merged Copyright & Socials) */
+.footer-bottom-row { 
+    padding: 35px 0; 
+    background-color: #f7f6f2; /* नीचे की पट्टी को थोड़ा सा गहरा टोन दिया */
+}
+.footer-social-links a, .footer-bottom-links a {
+    font-size: 0.75rem;
+    transition: 0.3s;
+}
+.footer-social-links a:hover { 
+    color: #000000 !important;
+    text-decoration: underline !important;
+}
+.footer-bottom-links a:hover { 
+    color: #000000 !important; 
+    text-decoration: underline !important;
+}
+
+    </style>
+</head>
+<body>
+    <div class="p-4" style="max-width: 500px;">
+        {% if order.payment_method == 'COD' %}
+            <!-- COD के लिए सीधा सक्सेस संदेश -->
+            <div class="text-success display-1 mb-3">✓</div>
+            <h2 class="fw-normal mb-3" style="letter-spacing: 1px;">ORDER PLACED!</h2>
+            <p class="text-muted small mb-4">आपका ऑर्डर नंबर <strong>#{{ order.id }}</strong> सफलतापूर्वक बुक हो गया है। डिलीवरी के समय नकद भुगतान करें।</p>
+        {% else %}
+            <!-- Online QR के लिए वेरिफिकेशन पेंडिंग संदेश -->
+            <div class="text-warning display-1 mb-3">⏳</div>
+            <h2 class="fw-normal mb-3" style="letter-spacing: 1px;">PAYMENT UNDER REVIEW</h2>
+            <p class="text-muted small mb-4">आपका ऑर्डर नंबर <strong>#{{ order.id }}</strong> दर्ज कर लिया गया है। आपके द्वारा दी गई ट्रांजैक्शन आईडी ({{ order.transaction_id }}) की जांच एडमिन टीम कर रही है। भुगतान की पुष्टि होते ही ऑर्डर डिस्पैच कर दिया जाएगा।</p>
+        {% endif %}
+        <a href="/" class="btn btn-dark rounded-0 px-4 text-uppercase tracking-wider py-2" style="font-size: 12px;">Back to Home</a>
+    </div>
+</body>
+</html>

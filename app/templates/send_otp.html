@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>OTP Login | Parvi</title>
+   <!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+ <style>
+        /* Form ko screen ke center mein lane ke liye */
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Premium Minimal Card Styling */
+        .auth-card {
+            background: #ffffff;
+            border: 2px solid #dee2e6; /* Side border */
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Halka shadow effect */
+        }
+        /* Input fields alignment */
+        .form-control {
+            padding: 0.6rem 0.75rem;
+        }
+        /* Custom Button Styling */
+        .btn-auth {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem;
+            width: 100%;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.2s ease;
+        }
+        .btn-auth:hover {
+            background-color: #333333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-card text-center">
+    <!-- Heading -->
+    <h2 class="mb-4 fw-normal" style="letter-spacing: 3px; font-size: 1.75rem;">OTP LOGIN</h2>
+    
+    <!-- Success Messages Notification -->
+    {% if messages %}
+        {% for m in messages %}
+            <div class="alert alert-dark small rounded-0 text-start py-2 mb-3">{{ m }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Error Notifications (Most Important for debugging) -->
+    {% if error %}
+        <div class="alert alert-danger small rounded-0 text-start py-2 mb-3">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <!-- Main Form -->
+   <form method="POST" class="text-start">
+    {% csrf_token %}
+    <!-- 💡 Yeh raasta bacha kar rakhega -->
+    <input type="hidden" name="next" value="{{ next }}">
+    
+    <div class="mb-4">
+        <label class="small text-muted mb-1 text-uppercase">Enter Email Address</label>
+        <input type="email" name="email" class="form-control rounded-0" required placeholder="name@example.com">
+    </div>
+    <button type="submit" class="btn-auth rounded-0">Send OTP</button>
+</form>
+
+
+    <!-- Footer Back to Login Link -->
+    <p class="small text-muted mt-4 mb-0" style="font-size: 0.85rem;">
+        Remember password? <a href="{% url 'login_view' %}" class="text-dark fw-semibold text-decoration-none" style="border-bottom: 1px solid #000;">Login Here</a>
+    </p>
+</div>
+
+</body>
+</html>

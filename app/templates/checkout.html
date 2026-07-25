@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | Parvi Studio</title>
+ <!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+      body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #ffffff;
+    color: #111;
+    line-height: 1.6;
+}
+
+/* Form Fields */
+.form-control {
+    border: 1px solid #dcdcdc;
+    border-radius: 0;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: #111;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.form-control::placeholder {
+    color: #999;
+    font-size: 13px;
+}
+
+.form-control:focus {
+    border-color: #000;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Order Summary */
+.summary-box {
+    background: #fcfbf9;
+    border: 1px solid #ece8e2;
+    padding: 35px;
+    border-radius: 0;
+}
+
+/* Place Order Button */
+.btn-order {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 0;
+    background: #000;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-order:hover {
+    background: #2d2d2d;
+}
+
+.btn-order:active {
+    transform: scale(0.98);
+}
+
+/* Radio Button */
+.form-check {
+    margin-bottom: 12px;
+}
+
+.form-check-input {
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #000;
+    border-color: #000;
+}
+
+.form-check-label {
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Labels */
+label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #777;
+    text-transform: uppercase;
+}
+
+/* HR */
+hr {
+    border-color: #ece8e2;
+    opacity: 1;
+}
+
+
+
+
+    </style>
+</head>
+<body>
+   <div class="container my-5">
+    <div class="row g-5">
+        <!-- लेफ्ट साइड: एड्रेस का फॉर्म -->
+        <div class="col-lg-7">
+            <h3 class="fs-5 text-uppercase mb-4" style="letter-spacing: 1px;">Shipping Address</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <!-- यह छिपी हुई की (Key) व्यू को बताएगी कि यह स्टेज 1 है -->
+                <input type="hidden" name="address_submit" value="1">
+
+                <div class="mb-3">
+                    <label class="small text-muted mb-1">Full Name *</label>
+                    <input type="text" name="full_name" class="form-control rounded-0" required>
+                </div>
+                <div class="mb-3">
+                    <label class="small text-muted mb-1">Phone Number *</label>
+                    <input type="text" name="phone" class="form-control rounded-0" required>
+                </div>
+                <div class="mb-3">
+                    <label class="small text-muted mb-1">Address Line 1 *</label>
+                    <input type="text" name="address_1" id="address_1" class="form-control rounded-0" required>
+                </div>
+                <div class="mb-3">
+                    <label class="small text-muted mb-1">Address Line 2 (Optional)</label>
+                    <input type="text" name="address_2" class="form-control rounded-0">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="small text-muted mb-1">City *</label>
+                        <input type="text" name="city" id="city" class="form-control rounded-0" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="small text-muted mb-1">State *</label>
+                        <input type="text" name="state" id="state" class="form-control rounded-0" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="small text-muted mb-1">Pincode *</label>
+                    <input type="text" name="pincode" class="form-control rounded-0" required>
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100 rounded-0 py-3 text-uppercase fw-bold" style="letter-spacing: 2px;">
+                    Continue to Payment
+                </button>
+            </form>
+        </div>
+
+        <!-- राइट साइड: छोटी रसीद जो टाइप करने पर लाइव बदलेगी (जावास्क्रिप्ट के साथ) -->
+      <!-- राइट साइड: छोटी रसीद जो टाइप करने पर लाइव बदलेगी (100% FIXED) -->
+<div class="col-lg-5">
+    <div class="summary-box p-4 border bg-light sticky-top" style="top: 100px;">
+        <h4 class="fs-6 fw-bold text-uppercase mb-4" style="letter-spacing: 1px;">Your Order</h4>
+        
+        <div class="d-flex justify-content-between mb-2 small text-muted">
+            <span>Subtotal</span>
+            <span>₹ {{ subtotal }}</span>
+        </div>
+        
+        <div class="d-flex justify-content-between mb-3 small text-muted">
+            <span>Estimated Shipping</span>
+            <!-- 🎯 यहाँ ध्यान दें: इसमें 'id="live-shipping-text"' का होना सबसे ज़रूरी है -->
+            <span id="live-shipping-text">₹ 40</span>
+        </div>
+        
+        <hr>
+        
+        <div class="d-flex justify-content-between mb-0 fw-bold fs-5 text-dark">
+            <span>Estimated Total</span>
+            <!-- 🎯 यहाँ ध्यान दें: इसमें 'id="live-total-text"' का होना सबसे ज़रूरी है -->
+            <span id="live-total-text">₹ {{ subtotal }}</span>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+<!-- इसके नीचे आपकी पुरानी जावास्क्रिप्ट (calculateShipping वाली) बिल्कुल वैसी ही लगी रहेगी -->
+
+   
+
+ <!-- जावास्क्रिप्ट जो QR बॉक्स को दिखाएगी या छुपाएगी -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var cityBox = document.getElementById("city");
+        var stateBox = document.getElementById("state");
+        var shippingSpan = document.getElementById("live-shipping-text");
+        var totalSpan = document.getElementById("live-total-text");
+
+        // बैकएंड से सबटोटल और कपड़ों की संख्या लाइव कैच की
+        var subtotal = parseFloat("{{ subtotal }}") || 0;
+        var totalItems = parseInt("{{ cart_items.count }}") || 1; 
+
+        var northEastStates = ['assam', 'meghalaya', 'tripura', 'mizoram', 'manipur', 'nagaland', 'arunachal pradesh', 'sikkim', 'jammu', 'kashmir', 'andaman', 'nicobar'];
+
+        function updateEstimatedSummary() {
+            if (!cityBox || !stateBox || !shippingSpan || !totalSpan) return;
+
+            var city = cityBox.value.trim().toLowerCase();
+            var state = stateBox.value.trim().toLowerCase();
+            var baseShippingInr = 40; 
+
+            if (city === "bhopal") {
+                baseShippingInr = 40;
+            } else if (state === "madhya pradesh" || state === "mp") {
+                baseShippingInr = 80;
+            } else if (state !== "" && northEastStates.indexOf(state) !== -1) {
+                baseShippingInr = 160;
+            } else if (city !== "" || state !== "") {
+                baseShippingInr = 110; 
+            }
+
+            var finalShippingInr = baseShippingInr;
+            if (totalItems > 2) {
+                var extraItems = totalItems - 2;
+                finalShippingInr = baseShippingInr + (extraItems * 25);
+            }
+
+            var finalTotalInr = subtotal + finalShippingInr;
+
+            shippingSpan.innerText = "₹ " + finalShippingInr;
+            totalSpan.innerText = "₹ " + finalTotalInr.toFixed(2);
+        }
+
+        if (cityBox) cityBox.addEventListener("input", updateEstimatedSummary);
+        if (stateBox) stateBox.addEventListener("input", updateEstimatedSummary);
+        
+        updateEstimatedSummary();
+    });
+</script>
+
+</body>
+</html>
