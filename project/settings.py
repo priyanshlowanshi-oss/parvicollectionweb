@@ -173,4 +173,8 @@ DEFAULT_FROM_EMAIL =  EMAIL_HOST_USER
 
 
 
-
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
