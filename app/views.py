@@ -236,104 +236,307 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 
-def register_view(request):
-    if request.method == "POST":
-        first_name = request.POST.get('first_name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        otp_entered = request.POST.get('otp')
+import random
+import time
 
-        # 🔐 स्टेज 2: ग्राहक ने OTP डाला और 'CREATE ACCOUNT' दबाया (Isko pehle check karenge)
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+
+
+
+
+def register_view(request):
+
+    if request.method == "POST":
+
+        first_name = request.POST.get("first_name")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        otp_entered = request.POST.get("otp")
+
+        # ================= OTP VERIFY =================
+
         if otp_entered:
-            s_name = request.session.get('signup_name')
-            s_email = request.session.get('signup_email')
-            s_password = request.session.get('signup_password')
-            s_otp = request.session.get('signup_otp')
-            
-            if s_otp and str(s_otp) == str(otp_entered).strip():
-                # User Create Karein
-                user = User.objects.create_user(username=s_email, email=s_email, password=s_password)
-                user.first_name = s_name
-                user.save()
-                
-                login(request, user)
-                
-                # Session clear karein
-                keys_to_delete = ['signup_name', 'signup_email', 'signup_password', 'signup_otp']
-                for key in keys_to_delete:
-                    request.session.pop(key, None)
-                    
-                return redirect('index')
-            else:
-                return render(request, 'register.html', {
-                    'first_name': s_name, 
-                    'email': s_email, 
-                    'password': s_password, 
-                    'otp_sent': True, 
-                    'error': 'गलत OTP, कृपया दोबारा सही OTP भरें!'
+
+            signup_name = request.session.get("signup_name")
+            signup_email = request.session.get("signup_email")
+            signup_password = request.session.get("signup_password")
+            signup_otp = request.session.get("signup_otp")
+            otp_time = request.session.get("signup_otp_time")
+
+            if not signup_otp:
+                return render(request, "register.html", {
+                    "error": "OTP expired. Please resend OTP."
                 })
 
-        # 🛑 स्टेज 1: ग्राहक ने ईमेल भरा और पहली बार 'SEND OTP' दबाया
+            if time.time() - otp_time > 600:
+
+                request.session.flush()
+
+                return render(request, "register.html", {
+                    "error": "OTP expired. Please resend OTP."
+                })
+
+            if str(signup_otp).strip() != str(otp_entered).strip():
+
+                return render(request, "register.html", {
+                    "otp_sent": True,
+                    "first_name": signup_name,
+                    "email": signup_email,
+                    "password": signup_password,
+                    "error": "Invalid OTP."
+                })
+
+            if User.objects.filter(email=signup_email).exists():
+
+                request.session.flush()
+
+                return render(request, "register.html", {
+                    "error": "Email already registered."
+                })
+
+            user = User.objects.create_user(
+                username=signup_email,
+                email=signup_email,
+                password=signup_password,
+                first_name=signup_name
+            )
+
+            login(request, user)
+
+            request.session.flush()
+
+            return redirect("index")
+
+
+
+                # ================= SEND OTP =================
+
         elif email:
+
+            # Empty Field Check
+            if not first_name or not email or not password:
+                return render(request, "register.html", {
+                    "error": "Please fill all fields."
+                })
+
+            # Password Length
+            if len(password) < 8:
+                return render(request, "register.html", {
+                    "error": "Password must be at least 8 characters."
+                })
+
+            # Duplicate Email
             if User.objects.filter(email=email).exists():
-                return render(request, 'register.html', {'error': "इस ईमेल से अकाउंट पहले से बना हुआ है। लॉगिन करें।"})
+                return render(request, "register.html", {
+                    "error": "Email already registered."
+                })
 
             generated_otp = str(random.randint(100000, 999999))
-            request.session['signup_otp'] = generated_otp
 
-            # Email Send Block with Error Catching ✉️
+            # Session Save
+            request.session["signup_name"] = first_name
+            request.session["signup_email"] = email
+            request.session["signup_password"] = password
+            request.session["signup_otp"] = generated_otp
+            request.session["signup_otp_time"] = time.time()
+
             try:
+
                 send_mail(
-                    subject="Parvi Studio - Email Verification OTP",
-                    message=f"Hello {first_name},\n\nYour OTP for Parvi Studio registration is: {generated_otp}\n\nThanks,\nParvi Studio",
+                    subject="Parvi Collection OTP Verification",
+                    message=f"""
+Hello {first_name},
+
+Your OTP is
+
+{generated_otp}
+
+This OTP is valid for 10 minutes.
+
+Thank You,
+Parvi Collection
+""",
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[email],
                     fail_silently=False,
                 )
+
             except Exception as e:
-                # Agar Google connection fail hoga toh screen par error dikhega
-                return render(request, 'register.html', {
-                    'first_name': first_name,
-                    'email': email,
-                    'password': password,
-                    'error': f"Email nahi bheja ja saka! Wajah: {str(e)}"
+
+                return render(request, "register.html", {
+                    "error": f"Email nahi bheja ja saka! Wajah: {e}"
                 })
 
-            # Data ko session mein save karein
-            request.session['signup_name'] = first_name
-            request.session['signup_email'] = email
-            request.session['signup_password'] = password
-            
-            return render(request, 'register.html', {
-                'first_name': first_name,
-                'email': email,
-                'password': password,
-                'otp_sent': True
+            return render(request, "register.html", {
+                "otp_sent": True,
+                "first_name": first_name,
+                "email": email,
+                "password": password,
             })
 
-    return render(request, 'register.html')
+    return render(request, "register.html")
 
 
-# 2. ग्राहक लॉगिन व्यू
+# ===========================
+# LOGIN VIEW
+# ===========================
+
 def login_view(request):
-    if request.method == "POST":
-        username = request.POST.get('email')
-        password = request.POST.get('password')
-        
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('index')
-        else:
-            messages.error(request, "गलत ईमेल या पासवर्ड। कृपया दोबारा जांचें।")
-            return redirect('login_view')
-            
-    return render(request, 'login.html')
 
-# 3. लॉगआउट व्यू
+    if request.method == "POST":
+
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        if not email or not password:
+
+            return render(request, "login.html", {
+                "error": "Please fill all fields."
+            })
+
+        user = authenticate(
+            request,
+            username=email,
+            password=password
+        )
+
+        if user is not None:
+
+            login(request, user)
+
+            messages.success(request, f"Welcome {user.first_name}")
+
+            return redirect("index")
+
+        else:
+
+            return render(request, "login.html", {
+                "error": "Invalid Email or Password."
+            })
+
+    return render(request, "login.html")
+
+
+# ===========================
+# LOGOUT VIEW
+# ===========================
+
 def logout_view(request):
+
     logout(request)
-    return redirect('index')
+
+    messages.success(request, "Logged out successfully.")
+
+    return redirect("index")
+
+
+
+
+
+
+# def register_view(request):
+#     if request.method == "POST":
+#         first_name = request.POST.get('first_name')
+#         email = request.POST.get('email')
+#         password = request.POST.get('password')
+#         otp_entered = request.POST.get('otp')
+
+#         # 🔐 स्टेज 2: ग्राहक ने OTP डाला और 'CREATE ACCOUNT' दबाया (Isko pehle check karenge)
+#         if otp_entered:
+#             s_name = request.session.get('signup_name')
+#             s_email = request.session.get('signup_email')
+#             s_password = request.session.get('signup_password')
+#             s_otp = request.session.get('signup_otp')
+            
+#             if s_otp and str(s_otp) == str(otp_entered).strip():
+#                 # User Create Karein
+#                 user = User.objects.create_user(username=s_email, email=s_email, password=s_password)
+#                 user.first_name = s_name
+#                 user.save()
+                
+#                 login(request, user)
+                
+#                 # Session clear karein
+#                 keys_to_delete = ['signup_name', 'signup_email', 'signup_password', 'signup_otp']
+#                 for key in keys_to_delete:
+#                     request.session.pop(key, None)
+                    
+#                 return redirect('index')
+#             else:
+#                 return render(request, 'register.html', {
+#                     'first_name': s_name, 
+#                     'email': s_email, 
+#                     'password': s_password, 
+#                     'otp_sent': True, 
+#                     'error': 'गलत OTP, कृपया दोबारा सही OTP भरें!'
+#                 })
+
+#         # 🛑 स्टेज 1: ग्राहक ने ईमेल भरा और पहली बार 'SEND OTP' दबाया
+#         elif email:
+#             if User.objects.filter(email=email).exists():
+#                 return render(request, 'register.html', {'error': "इस ईमेल से अकाउंट पहले से बना हुआ है। लॉगिन करें।"})
+
+#             generated_otp = str(random.randint(100000, 999999))
+#             request.session['signup_otp'] = generated_otp
+
+#             # Email Send Block with Error Catching ✉️
+#             try:
+#                 send_mail(
+#                     subject="Parvi Studio - Email Verification OTP",
+#                     message=f"Hello {first_name},\n\nYour OTP for Parvi Studio registration is: {generated_otp}\n\nThanks,\nParvi Studio",
+#                     from_email=settings.DEFAULT_FROM_EMAIL,
+#                     recipient_list=[email],
+#                     fail_silently=False,
+#                 )
+#             except Exception as e:
+#                 # Agar Google connection fail hoga toh screen par error dikhega
+#                 return render(request, 'register.html', {
+#                     'first_name': first_name,
+#                     'email': email,
+#                     'password': password,
+#                     'error': f"Email nahi bheja ja saka! Wajah: {str(e)}"
+#                 })
+
+#             # Data ko session mein save karein
+#             request.session['signup_name'] = first_name
+#             request.session['signup_email'] = email
+#             request.session['signup_password'] = password
+            
+#             return render(request, 'register.html', {
+#                 'first_name': first_name,
+#                 'email': email,
+#                 'password': password,
+#                 'otp_sent': True
+#             })
+
+#     return render(request, 'register.html')
+
+
+# # 2. ग्राहक लॉगिन व्यू
+# def login_view(request):
+#     if request.method == "POST":
+#         username = request.POST.get('email')
+#         password = request.POST.get('password')
+        
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             return redirect('index')
+#         else:
+#             messages.error(request, "गलत ईमेल या पासवर्ड। कृपया दोबारा जांचें।")
+#             return redirect('login_view')
+            
+#     return render(request, 'login.html')
+
+# # 3. लॉगआउट व्यू
+# def logout_view(request):
+#     logout(request)
+#     return redirect('index')
 
 
 

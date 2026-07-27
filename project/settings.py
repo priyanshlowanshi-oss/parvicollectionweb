@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ==========================
 SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
+# DEBUG = True
 
 ALLOWED_HOSTS = ["*"]   # Production में अपना domain डाल देना
 
@@ -133,7 +134,7 @@ CLOUDINARY_URL = config("CLOUDINARY_URL")
 # ==========================
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = "smtp-relay.brevo.com"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
